@@ -1,0 +1,80 @@
+[INSTALLING Docker In Linux Ubuntu 20.04 LTS Server] [16GB RAM WITH 4vCPU, 20GB SSD] 
+
+sudo -i
+mkdir appconsole
+cd appconsole
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl status docker
+
+[Install Magento 2 in Docker]
+
+apt install git
+git clone https://github.com/alexcheng1982/docker-magento2.git
+apt install docker-compose
+
+{Please check the path with pwd command in Linux Server}
+
+your root dic will show like [root@ip-172-31-16-112:~/appconsole# ]
+hit below commands to configure magento in Docker Enviroument.
+
+root@ip-172-31-16-112:~/appconsole# ls
+root@ip-172-31-16-112:~/appconsole# cd docker-magento2/
+root@ip-172-31-16-112:~/appconsole/docker-magento2#
+root@ip-172-31-16-112:~/appconsole/docker-magento2# nano docker-compose.yml
+
+version: '3.0'
+services:
+  web:
+    image: alexcheng/magento2
+    ports:
+      - "80:80"
+    links:
+      - db
+    volumes:
+      - magento-data:/var/www/html
+    env_file:
+      - env
+  db:
+    image: mysql:5.6.23
+    volumes:
+      - db-data:/var/lib/mysql/data
+    env_file:
+      - env
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8580:80"
+    links:
+      - db
+volumes:
+  magento-data:
+  db-data:
+
+*[no need to edit]
+
+Now you need to edit "env" with following changes.
+
+MAGENTO_URL=xxx.xxx.xxx.xxx [The Machine IP] [18.234.175.181] in my case AWS EC2 Ip.
+MAGENTO_BACKEND_FRONTNAME=admin
+MAGENTO_USE_SECURE=0
+MAGENTO_BASE_URL_SECURE=0
+MAGENTO_USE_SECURE_ADMIN=0
+
+docker-compose up
+
+after configuration hit the ip [ http://18.234.175.181 ] you will be redirect to magento 2.3.1 installation page.
+Continue to Next process all.
+edit "Database Server Host" and enter "db" edit the "Database Server Username" and enter "magento" and enter the password "magento".
+you can edit the "Magento Admin Address" section as per your choice "http://18.234.175.181/admin_18rso7" & i want to change it like "http://18.234.175.181/admin"
+
+Create Admin Account as per normal registration.
+Congratulation, you have done magento 2.3.1 installation.
+Thank you.
